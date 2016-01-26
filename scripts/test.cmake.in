@@ -8,7 +8,7 @@ endforeach()
 
 # Add the directory containing libpng to the PATH (Windows only)
 if(WIN32)
-  get_filename_component(LIBPNG_DIR "${LIBPNG}" DIRECTORY)
+  get_filename_component(LIBPNG_DIR "${LIBPNG}" PATH)
   file(TO_NATIVE_PATH "${LIBPNG_DIR}" LIBPNG_DIR)
   set(ENV{PATH} "${LIBPNG_DIR};$ENV{PATH}")
 endif()
