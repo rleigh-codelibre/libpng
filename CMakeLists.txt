@@ -375,7 +375,12 @@ set(pngunknown_sources
 set(pngimage_sources
   contrib/libtests/pngimage.c
 )
-# SOME NEEDED DEFINITIONS
+set(pngfix_sources
+  contrib/tools/pngfix.c
+)
+set(png_fix_itxt_sources
+  contrib/tools/png-fix-itxt.c
+)
 
 if(MSVC)
   add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
@@ -618,6 +623,16 @@ if(PNG_TESTS AND PNG_SHARED)
   png_add_test(NAME pngimage-full COMMAND pngimage OPTIONS --exhaustive --list-combos --log FILES ${PNGSUITE_PNGS})
 endif()
 
+if(PNG_SHARED)
+  add_executable(pngfix ${pngfix_sources})
+  target_link_libraries(pngfix png)
+  set(PNG_BIN_TARGETS pngfix)
+
+  add_executable(png-fix-itxt ${png_fix_itxt_sources})
+  target_link_libraries(png-fix-itxt ${ZLIB_LIBRARY} ${M_LIBRARY})
+  list(APPEND PNG_BIN_TARGETS png-fix-itxt)
+endif()
+
 # Ensure the CMAKE_LIBRARY_OUTPUT_DIRECTORY is set
 IF(NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
   SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib")
@@ -741,6 +756,11 @@ if(NOT SKIP_INSTALL_EXECUTABLES AND NOT SKIP_INSTALL_ALL )
     install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PNGLIB_NAME}-config
             DESTINATION bin)
   endif(NOT WIN32 OR CYGWIN OR MINGW)
+endif()
+
+if(NOT SKIP_INSTALL_PROGRAMS AND NOT SKIP_INSTALL_ALL )
+  install(TARGETS ${PNG_BIN_TARGETS}
+      RUNTIME DESTINATION bin)
 endif()
 
 if(NOT SKIP_INSTALL_FILES AND NOT SKIP_INSTALL_ALL )
